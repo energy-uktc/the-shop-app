@@ -1,28 +1,45 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Button } from "react-native";
+import {
+  TouchableOpacity,
+  TouchableNativeFeedback,
+  Platform,
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Button
+} from "react-native";
 import Color from "../../constants/colors";
 
 const ProductItem = props => {
+  const TouchableComp =
+    Platform.OS === "android" ? TouchableNativeFeedback : TouchableOpacity;
   return (
     <View style={styles.product}>
-      <View style={styles.imageContainer}>
-        <Image style={styles.image} source={{ uri: props.imageUrl }} />
-      </View>
-      <View style={styles.details}>
-        <Text style={styles.title}>{props.title}</Text>
-        <Text style={styles.price}>${props.price.toFixed(2)}</Text>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          color={Color.primary}
-          title="Details"
-          onPress={props.OnViewDetail}
-        />
-        <Button
-          color={Color.primary}
-          title="Add to Cart"
-          onPress={props.OnAddToCart}
-        />
+      <View style={styles.touchable}>
+        <TouchableComp onPress={props.OnViewDetail} useForeground>
+          <View>
+            <View style={styles.imageContainer}>
+              <Image style={styles.image} source={{ uri: props.imageUrl }} />
+            </View>
+            <View style={styles.details}>
+              <Text style={styles.title}>{props.title}</Text>
+              <Text style={styles.price}>${props.price.toFixed(2)}</Text>
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                color={Color.primary}
+                title="Details"
+                onPress={props.OnViewDetail}
+              />
+              <Button
+                color={Color.primary}
+                title="Add to Cart"
+                onPress={props.OnAddToCart}
+              />
+            </View>
+          </View>
+        </TouchableComp>
       </View>
     </View>
   );
@@ -38,7 +55,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "white",
     height: 300,
-    margin: 20
+    margin: 20,
+    overflow: "hidden"
+  },
+  touchable: {
+    overflow: "hidden",
+    borderRadius: 10
   },
   details: {
     alignItems: "center",
