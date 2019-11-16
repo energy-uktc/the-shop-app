@@ -11,7 +11,7 @@ import {
 import Colors from "../../constants/colors";
 import * as cartActions from "../../store/actions/cart";
 
-const ProductOverviewScreen = props => {
+const ProductDetailsScreen = props => {
   const productId = props.navigation.getParam("productId");
   const selectedProduct = useSelector(state =>
     state.products.availableProducts.find(item => item.id === productId)
@@ -36,7 +36,7 @@ const ProductOverviewScreen = props => {
   );
 };
 
-ProductOverviewScreen.navigationOptions = navData => {
+ProductDetailsScreen.navigationOptions = navData => {
   return {
     headerTitle: navData.navigation.getParam("productTitle")
   };
@@ -65,4 +65,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ProductOverviewScreen;
+export default ProductDetailsScreen;
