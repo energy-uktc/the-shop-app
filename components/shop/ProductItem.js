@@ -17,7 +17,7 @@ const ProductItem = props => {
   return (
     <View style={styles.product}>
       <View style={styles.touchable}>
-        <TouchableComp onPress={props.OnSelect} useForeground>
+        <TouchableComp onPress={props.onSelect} useForeground>
           <View>
             <View style={styles.imageContainer}>
               <Image style={styles.image} source={{ uri: props.imageUrl }} />
