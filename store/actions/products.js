@@ -5,7 +5,8 @@ export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const SET_PRODUCTS = "SET_PRODUCTS";
 
 export const fetchProducts = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.userId;
     const response = await fetch(
       "https://rn-complete-guide-4f17e.firebaseio.com/products.json"
     );
@@ -24,7 +25,7 @@ export const fetchProducts = () => {
       loadedProducts.push(
         new Product(
           key,
-          "u1",
+          resData[key].ownerId,
           resData[key].title,
           resData[key].imageUrl,
           resData[key].description,
@@ -34,7 +35,8 @@ export const fetchProducts = () => {
     }
     dispatch({
       type: SET_PRODUCTS,
-      products: loadedProducts
+      products: loadedProducts,
+      userProducts: loadedProducts.filter(prod => prod.ownerId === userId)
     });
   };
 };
@@ -61,6 +63,7 @@ export const deleteProduct = productId => {
 export const createProduct = (title, price, imageUrl, description) => {
   return async (dispatch, getState) => {
     const tokenId = getState().auth.idToken;
+    const userId = getState().auth.userId;
     const response = await fetch(
       `https://rn-complete-guide-4f17e.firebaseio.com/products.json?auth=${tokenId}`,
       {
@@ -72,7 +75,8 @@ export const createProduct = (title, price, imageUrl, description) => {
           title,
           price,
           imageUrl,
-          description
+          description,
+          ownerId: userId
         })
       }
     );
@@ -90,6 +94,7 @@ export const createProduct = (title, price, imageUrl, description) => {
       productData: {
         id: resData.name,
         title,
+        ownerId: userId,
         price,
         imageUrl,
         description

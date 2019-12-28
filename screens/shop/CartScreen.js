@@ -1,14 +1,17 @@
-import React from "react";
-import { View, Text, Button, FlatList, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Button, FlatList, StyleSheet, Alert } from "react-native";
 import CartItem from "../../components/shop/CartItem";
 import { useSelector, useDispatch } from "react-redux";
 import Colors from "../../constants/colors";
 import colors from "../../constants/colors";
 import * as cartActions from "../../store/actions/cart";
 import * as orderActions from "../../store/actions/order";
+import LoadingControl from "../../components/UI/LoadingControl";
 
 const CartScreen = props => {
   const cartTotalAmount = useSelector(state => state.cart.totalAmount);
+  const [isLoading, setIsLoading] = useState(false);
+
   const cartItems = useSelector(state => {
     const cartItemsArr = [];
     for (let key in state.cart.items) {
@@ -23,6 +26,16 @@ const CartScreen = props => {
     return cartItemsArr.sort((a, b) => (a.productId > b.productId ? 1 : -1));
   });
 
+  const createOrder = async (cartItems, cartTotalAmount) => {
+    try {
+      setIsLoading(true);
+      await dispatch(orderActions.addOrder(cartItems, cartTotalAmount));
+      dispatch(cartActions.clearCart());
+      setIsLoading(false);
+    } catch (err) {
+      Alert.alert("Error", err.message, [{ text: "Okay" }]);
+    }
+  };
   const dispatch = useDispatch();
   return (
     <View style={styles.screen}>
@@ -33,15 +46,18 @@ const CartScreen = props => {
             ${Math.abs(cartTotalAmount).toFixed(2)}
           </Text>
         </Text>
-        <Button
-          color={colors.accent}
-          title="Confirm Order"
-          disabled={cartItems.length === 0}
-          onPress={() => {
-            dispatch(orderActions.addOrder(cartItems, cartTotalAmount));
-            dispatch(cartActions.clearCart());
-          }}
-        />
+        {isLoading ? (
+          <LoadingControl style={{ alignItems: "flex-end" }} />
+        ) : (
+          <Button
+            color={colors.accent}
+            title="Confirm Order"
+            disabled={cartItems.length === 0}
+            onPress={() => {
+              createOrder(cartItems, cartTotalAmount);
+            }}
+          />
+        )}
       </View>
       <FlatList
         data={cartItems}

@@ -4,10 +4,11 @@ export const ADD_ORDER = "ADD_ORDER";
 export const SET_ORDERS = "SET_ORDERS";
 
 export const fetchOrders = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     let loadedOrders = [];
+    const userId = getState().auth.userId;
     const response = await fetch(
-      "https://rn-complete-guide-4f17e.firebaseio.com/orders.json"
+      `https://rn-complete-guide-4f17e.firebaseio.com/${userId}/orders.json`
     );
 
     if (!response.ok) {
@@ -38,9 +39,10 @@ export const fetchOrders = () => {
 export const addOrder = (cartItems, totalAmount) => {
   return async (dispatch, getState) => {
     const tokenId = getState().auth.idToken;
+    const userId = getState().auth.userId;
     const orderDate = new Date();
     const response = await fetch(
-      `https://rn-complete-guide-4f17e.firebaseio.com/orders.json?auth=${tokenId}`,
+      `https://rn-complete-guide-4f17e.firebaseio.com/${userId}/orders.json?auth=${tokenId}`,
       {
         method: "POST",
         headers: {

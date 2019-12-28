@@ -4,7 +4,7 @@ import Color from "../../constants/colors";
 
 const LoadingControl = props => {
   return (
-    <View style={styles.centered}>
+    <View style={{ ...styles.centered, ...props.style }}>
       <ActivityIndicator size="large" color={Color.primary} />
     </View>
   );
