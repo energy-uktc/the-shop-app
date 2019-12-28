@@ -1,31 +1,101 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   FlatList,
   Button,
-  View,
   Text,
   StyleSheet,
-  Platform
+  Platform,
+  View,
+  RefreshControl,
+  ActivityIndicator
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
 import * as cartActions from "../../store/actions/cart";
+import * as productActions from "../../store/actions/products";
+
 import HeaderButton from "../../components/UI/HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import Color from "../../constants/colors";
+import LoadingControl from "../../components/UI/LoadingControl";
 
 const ProductsOverviewScreen = props => {
   const products = useSelector(state => state.products.availableProducts);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState();
   const dispatch = useDispatch();
 
+  const loadProducts = useCallback(async () => {
+    setError(null);
+
+    try {
+      await dispatch(productActions.fetchProducts());
+    } catch (err) {
+      setError(err);
+    }
+  }, [setIsLoading, dispatch]);
+
+  useEffect(() => {
+    const willFocusEvent = props.navigation.addListener("willFocus", () => {
+      loadProducts();
+    });
+    return () => {
+      willFocusEvent.remove();
+    };
+  }, [loadProducts]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    loadProducts().then(() => {
+      setIsLoading(false);
+    });
+  }, [loadProducts]);
   const selectItemHandler = (id, title) => {
     props.navigation.navigate("ProductDetail", {
       productId: id,
       productTitle: title
     });
   };
+
+  if (isLoading) {
+    return <LoadingControl />;
+  }
+
+  if (!isLoading && products.length === 0) {
+    return (
+      <View style={styles.centered}>
+        <Text>There is no items! Try add some</Text>
+      </View>
+    );
+  }
+
+  if (!isLoading && error) {
+    return (
+      <View style={styles.centered}>
+        <Text>{error.message}</Text>
+        <Button
+          title="Try again"
+          onPress={loadProducts}
+          color={Color.primary}
+        />
+      </View>
+    );
+  }
   return (
     <FlatList
+      //onRefresh={loadProducts}
+      //refreshing={isRefreshing}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={loadProducts}
+          title="Pull to refresh"
+          tintColor={Color.primary}
+          titleColor={Color.primary}
+          colors={[Color.primary]} //{Color.primary}
+        />
+      }
       data={products}
       keyExtractor={item => item.id}
       renderItem={({ item }) => {

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import CartItem from "./CartItem";
 import Colors from "../../constants/colors";
+import Card from "../UI/Card";
 
 const OrderItem = props => {
   const [showDetails, setShowDetails] = useState(false);
@@ -19,35 +20,37 @@ const OrderItem = props => {
         setShowDetails(prevState => !prevState);
       }}
     >
-      <View style={styles.orderItem}>
-        <View style={styles.summary}>
-          {/* <Text>{props.order.id}</Text> */}
-          <Text style={styles.totalAmount}>
-            ${props.order.amount.toFixed(2)}
-          </Text>
-          <Text style={styles.date}>{props.order.readableDate}</Text>
-        </View>
-        {showDetails && (
-          <View style={styles.details}>
-            {props.order.items.map(item => (
-              <CartItem
-                key={item.productId}
-                quantity={item.quantity}
-                title={item.productTitle}
-                price={item.productPrice}
-                amount={item.sum}
-              />
-            ))}
+      <View>
+        <Card style={styles.orderItem}>
+          <View style={styles.summary}>
+            {/* <Text>{props.order.id}</Text> */}
+            <Text style={styles.totalAmount}>
+              ${props.order.amount.toFixed(2)}
+            </Text>
+            <Text style={styles.date}>{props.order.readableDate}</Text>
           </View>
-        )}
+          {showDetails && (
+            <View style={styles.details}>
+              {props.order.items.map(item => (
+                <CartItem
+                  key={item.productId}
+                  quantity={item.quantity}
+                  title={item.productTitle}
+                  price={item.productPrice}
+                  amount={item.sum}
+                />
+              ))}
+            </View>
+          )}
 
-        <View style={styles.expand}>
-          <Ionicons
-            name={showDetails ? "ios-arrow-up" : "ios-arrow-down"}
-            color={Colors.primary}
-            size={23}
-          />
-        </View>
+          <View style={styles.expand}>
+            <Ionicons
+              name={showDetails ? "ios-arrow-up" : "ios-arrow-down"}
+              color={Colors.primary}
+              size={23}
+            />
+          </View>
+        </Card>
       </View>
     </TouchableNativeFeedback>
   );
@@ -55,14 +58,7 @@ const OrderItem = props => {
 
 const styles = StyleSheet.create({
   orderItem: {
-    shadowColor: "black",
-    shadowOpacity: 0.26,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 6,
-    borderRadius: 10,
-    backgroundColor: "white",
-    margin: 20,
+    margin: 10,
     padding: 10,
     alignItems: "center"
   },
