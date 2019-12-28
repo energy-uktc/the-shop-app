@@ -34,9 +34,13 @@ export const signup = (email, password) => {
     }
 
     const respData = await response.json();
-    console.log(respData);
 
-    dispatch({ type: SIGNUP });
+    dispatch({
+      type: SIGNUP,
+      email: respData.email,
+      idToken: respData.idToken,
+      userId: respData.localId
+    });
   };
 };
 
@@ -75,8 +79,11 @@ export const login = (email, password) => {
     }
 
     const respData = await response.json();
-    console.log(respData);
-
-    dispatch({ type: LOGIN });
+    dispatch({
+      type: LOGIN,
+      email: respData.email,
+      idToken: respData.idToken,
+      userId: respData.localId
+    });
   };
 };

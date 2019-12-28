@@ -97,12 +97,14 @@ const AuthScreen = props => {
           )
         );
       }
+
+      props.navigation.navigate("Shop");
     } catch (err) {
+      setIsLoading(false);
       Alert.alert(`Error ${isSignup ? "sing up" : "login"}`, `${err}`, [
         { text: "OK" }
       ]);
     }
-    setIsLoading(false);
   }, [dispatch, isSignup, formState]);
 
   // if (isLoading) {

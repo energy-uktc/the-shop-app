@@ -21,11 +21,19 @@ const UserProductsScreen = props => {
       {
         text: "Yes",
         style: "destructive",
-        onPress: () => dispatch(productActions.deleteProduct(id))
+        onPress: () => {
+          deleteProduct();
+        }
       }
     ]);
   };
-
+  const deleteProduct = async id => {
+    try {
+      await dispatch(productActions.deleteProduct(id));
+    } catch (err) {
+      Alert.alert("Error", err.message, [{ text: "Okay" }]);
+    }
+  };
   return (
     <FlatList
       data={userProducts}

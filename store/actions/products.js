@@ -39,16 +39,17 @@ export const fetchProducts = () => {
   };
 };
 export const deleteProduct = productId => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const tokenId = getState().auth.idToken;
     const response = await fetch(
-      `https://rn-complete-guide-4f17e.firebaseio.com/products/${productId}.json`,
+      `https://rn-complete-guide-4f17e.firebaseio.com/products/${productId}.json?auth=${tokenId}`,
       {
         method: "DELETE"
       }
     );
 
     if (!response.ok) {
-      throw new Error(`Something went wrong. ${response.statusText}`);
+      throw new Error(`Something went wrong.`);
     }
     dispatch({
       type: DELETE_PRODUCT,
@@ -58,9 +59,10 @@ export const deleteProduct = productId => {
 };
 
 export const createProduct = (title, price, imageUrl, description) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const tokenId = getState().auth.idToken;
     const response = await fetch(
-      "https://rn-complete-guide-4f17e.firebaseio.com/products.json",
+      `https://rn-complete-guide-4f17e.firebaseio.com/products.json?auth=${tokenId}`,
       {
         method: "POST",
         headers: {
@@ -97,9 +99,10 @@ export const createProduct = (title, price, imageUrl, description) => {
 };
 
 export const updateProduct = (id, title, price, imageUrl, description) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const tokenId = getState().auth.idToken;
     const response = await fetch(
-      `https://rn-complete-guide-4f17e.firebaseio.com/products/${id}.json`,
+      `https://rn-complete-guide-4f17e.firebaseio.com/products/${id}.json?auth=${tokenId}`,
       {
         method: "PATCH",
         headers: {
@@ -115,6 +118,8 @@ export const updateProduct = (id, title, price, imageUrl, description) => {
     );
 
     if (!response.ok) {
+      console.log(response);
+
       throw new Error(
         `Something went wrong. ${
           response.statusText ? response.statusText : ""
