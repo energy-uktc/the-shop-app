@@ -38,6 +38,7 @@ export const fetchOrders = () => {
 
 export const addOrder = (cartItems, totalAmount) => {
   return async (dispatch, getState) => {
+    await refreshTokenIfExpired(dispatch, getState);
     const tokenId = getState().auth.idToken;
     const userId = getState().auth.userId;
     const orderDate = new Date();

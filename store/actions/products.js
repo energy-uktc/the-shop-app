@@ -1,4 +1,11 @@
 import Product from "../../models/product";
+import {
+  isTokenExpired,
+  getUserData,
+  refreshTokenIfExpired
+} from "../../utils/authentication";
+import * as authActions from "./auth";
+
 export const DELETE_PRODUCT = "DELETE_PRODUCT";
 export const CREATE_PRODUCT = "CREATE_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
@@ -42,9 +49,16 @@ export const fetchProducts = () => {
 };
 export const deleteProduct = productId => {
   return async (dispatch, getState) => {
-    const tokenId = getState().auth.idToken;
+    await refreshTokenIfExpired(dispatch, getState);
+    let { idToken, expirationDate } = getState().auth;
+    if (isTokenExpired(expirationDate)) {
+      const { refreshToken } = await getUserData();
+      await authActions.refreshToken(refreshToken);
+      idToken = getState().auth.idToken;
+    }
+
     const response = await fetch(
-      `https://rn-complete-guide-4f17e.firebaseio.com/products/${productId}.json?auth=${tokenId}`,
+      `https://rn-complete-guide-4f17e.firebaseio.com/products/${productId}.json?auth=${idToken}`,
       {
         method: "DELETE"
       }
@@ -62,6 +76,8 @@ export const deleteProduct = productId => {
 
 export const createProduct = (title, price, imageUrl, description) => {
   return async (dispatch, getState) => {
+    await refreshTokenIfExpired(dispatch, getState);
+
     const tokenId = getState().auth.idToken;
     const userId = getState().auth.userId;
     const response = await fetch(
@@ -105,9 +121,10 @@ export const createProduct = (title, price, imageUrl, description) => {
 
 export const updateProduct = (id, title, price, imageUrl, description) => {
   return async (dispatch, getState) => {
-    const tokenId = getState().auth.idToken;
+    await refreshTokenIfExpired(dispatch, getState);
+    let { idToken } = getState().auth;
     const response = await fetch(
-      `https://rn-complete-guide-4f17e.firebaseio.com/products/${id}.json?auth=${tokenId}`,
+      `https://rn-complete-guide-4f17e.firebaseio.com/products/${id}.json?auth=${idToken}`,
       {
         method: "PATCH",
         headers: {

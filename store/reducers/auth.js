@@ -1,24 +1,26 @@
-import { SIGNUP, LOGIN } from "../actions/auth";
+import { AUTHENTICATE, REFRESH_TOKEN } from "../actions/auth";
 
 const initialState = {
   email: "",
   idToken: "",
-  userId: ""
+  userId: "",
+  expirationDate: ""
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SIGNUP:
+    case AUTHENTICATE:
       return {
         email: action.email,
         idToken: action.idToken,
-        userId: action.userId
+        userId: action.userId,
+        expirationDate: action.expirationDate
       };
-    case LOGIN:
+    case REFRESH_TOKEN:
       return {
-        email: action.email,
+        ...state,
         idToken: action.idToken,
-        userId: action.userId
+        expirationDate: action.expirationDate
       };
     default:
       return state;
