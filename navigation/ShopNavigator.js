@@ -13,7 +13,11 @@ import StartupScreen from "../screens/StartupScreen";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../constants/colors";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
-import { createDrawerNavigator } from "react-navigation-drawer";
+import {
+  createDrawerNavigator,
+  DrawerNavigatorItems
+} from "react-navigation-drawer";
+import SideDrawerView from "./SideDrawerView";
 
 const defaultNavOptions = {
   headerStyle: {
@@ -94,7 +98,8 @@ const ShopNavigator = createDrawerNavigator(
   {
     contentOptions: {
       activeTintColor: Colors.primary
-    }
+    },
+    contentComponent: SideDrawerView
   }
 );
 

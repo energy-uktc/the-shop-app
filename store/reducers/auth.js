@@ -1,4 +1,4 @@
-import { AUTHENTICATE, REFRESH_TOKEN } from "../actions/auth";
+import { AUTHENTICATE, REFRESH_TOKEN, LOGOUT } from "../actions/auth";
 
 const initialState = {
   email: "",
@@ -9,6 +9,8 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case LOGOUT:
+      return initialState;
     case AUTHENTICATE:
       return {
         email: action.email,

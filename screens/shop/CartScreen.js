@@ -31,10 +31,10 @@ const CartScreen = props => {
       setIsLoading(true);
       await dispatch(orderActions.addOrder(cartItems, cartTotalAmount));
       dispatch(cartActions.clearCart());
-      setIsLoading(false);
     } catch (err) {
       Alert.alert("Error", err.message, [{ text: "Okay" }]);
     }
+    setIsLoading(false);
   };
   const dispatch = useDispatch();
   return (

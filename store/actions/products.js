@@ -49,7 +49,7 @@ export const fetchProducts = () => {
 };
 export const deleteProduct = productId => {
   return async (dispatch, getState) => {
-    await refreshTokenIfExpired(dispatch, getState);
+    if (!(await refreshTokenIfExpired(dispatch, getState))) return;
     let { idToken, expirationDate } = getState().auth;
     if (isTokenExpired(expirationDate)) {
       const { refreshToken } = await getUserData();
@@ -76,7 +76,7 @@ export const deleteProduct = productId => {
 
 export const createProduct = (title, price, imageUrl, description) => {
   return async (dispatch, getState) => {
-    await refreshTokenIfExpired(dispatch, getState);
+    if (!(await refreshTokenIfExpired(dispatch, getState))) return;
 
     const tokenId = getState().auth.idToken;
     const userId = getState().auth.userId;
@@ -121,7 +121,7 @@ export const createProduct = (title, price, imageUrl, description) => {
 
 export const updateProduct = (id, title, price, imageUrl, description) => {
   return async (dispatch, getState) => {
-    await refreshTokenIfExpired(dispatch, getState);
+    if (!(await refreshTokenIfExpired(dispatch, getState))) return;
     let { idToken } = getState().auth;
     const response = await fetch(
       `https://rn-complete-guide-4f17e.firebaseio.com/products/${id}.json?auth=${idToken}`,

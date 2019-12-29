@@ -1,5 +1,5 @@
 import Order from "../../models/order";
-
+import { refreshTokenIfExpired } from "../../utils/authentication";
 export const ADD_ORDER = "ADD_ORDER";
 export const SET_ORDERS = "SET_ORDERS";
 
@@ -38,7 +38,7 @@ export const fetchOrders = () => {
 
 export const addOrder = (cartItems, totalAmount) => {
   return async (dispatch, getState) => {
-    await refreshTokenIfExpired(dispatch, getState);
+    if (!(await refreshTokenIfExpired(dispatch, getState))) return;
     const tokenId = getState().auth.idToken;
     const userId = getState().auth.userId;
     const orderDate = new Date();

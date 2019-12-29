@@ -1,5 +1,6 @@
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, Alert } from "react-native";
 import * as authActions from "../store/actions/auth";
+import USER_DATA from "../constants/userData";
 
 export const validateAuthentication = async () => {
   try {
@@ -20,7 +21,7 @@ export const validateAuthentication = async () => {
 };
 
 export const getUserData = async () => {
-  const userDataString = await AsyncStorage.getItem("userData");
+  const userDataString = await AsyncStorage.getItem(USER_DATA);
   if (!userDataString) {
     throw new Error("User information not found");
   }
@@ -42,8 +43,21 @@ export const isTokenExpired = expirationDate => {
 export const refreshTokenIfExpired = async (dispatch, getState) => {
   const { expirationDate } = getState().auth;
   if (!isTokenExpired(expirationDate)) return;
-
-  const { refreshToken } = await getUserData();
-  await dispatch(authActions.refreshToken(refreshToken));
+  try {
+    const { refreshToken } = await getUserData();
+    await dispatch(authActions.refreshToken(refreshToken));
+  } catch (err) {
+    Alert.alert(`Authentication Error`, `${err.message} The App will logout`, [
+      {
+        text: "Okay",
+        onPress: () => {
+          dispatch(authActions.logout());
+        }
+      }
+    ]);
+    //dispatch(authActions.logout());
+    return false;
+  }
+  return true;
   console.log("refreshTokenIfExpired");
 };

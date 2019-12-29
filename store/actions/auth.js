@@ -1,6 +1,9 @@
 import { AsyncStorage } from "react-native";
+import USER_DATA from "../../constants/userData";
+
 export const AUTHENTICATE = "AUTHENTICATE";
 export const REFRESH_TOKEN = "REFRESH_TOKEN";
+export const LOGOUT = "LOGOUT";
 
 export const storeAuthentication = (idToken, userId, email, expirationDate) => {
   return {
@@ -12,6 +15,12 @@ export const storeAuthentication = (idToken, userId, email, expirationDate) => {
   };
 };
 
+export const logout = () => {
+  return async dispatch => {
+    await AsyncStorage.removeItem(USER_DATA);
+    dispatch({ type: LOGOUT });
+  };
+};
 export const refreshToken = refreshToken => {
   return async dispatch => {
     const requestDate = new Date();
@@ -40,6 +49,18 @@ export const refreshToken = refreshToken => {
         case "MISSING_REFRESH_TOKEN":
           message = "No refresh token provided.";
           break;
+        case "USER_DISABLED":
+          message = "The user account has been disabled by an administrator.";
+          break;
+        case "USER_NOT_FOUND":
+          message =
+            "The user corresponding to the refresh token was not found.";
+          break;
+        case "INVALID_REFRESH_TOKEN":
+          message = "An invalid refresh token is provided.";
+          break;
+        case "INVALID_GRANT_TYPE":
+          message = "The grant type specified is invalid.";
       }
       throw new Error(message);
     }
@@ -57,7 +78,7 @@ export const refreshToken = refreshToken => {
     });
 
     await AsyncStorage.mergeItem(
-      "userData",
+      USER_DATA,
       JSON.stringify({
         idToken: respData.id_token,
         refreshToken: respData.refresh_token,
@@ -116,7 +137,7 @@ export const signup = (email, password) => {
     );
 
     await AsyncStorage.setItem(
-      "userData",
+      USER_DATA,
       JSON.stringify({
         userId: respData.localId,
         idToken: respData.idToken,
@@ -178,7 +199,7 @@ export const login = (email, password) => {
     );
 
     await AsyncStorage.setItem(
-      "userData",
+      USER_DATA,
       JSON.stringify({
         userId: respData.localId,
         idToken: respData.idToken,
